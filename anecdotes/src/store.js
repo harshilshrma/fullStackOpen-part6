@@ -27,7 +27,12 @@ const useAnecdoteStore = create((set) => ({
           anec.id === id ? {...anec, votes: anec.votes + 1} : anec
         )
       })
-    )
+    ),
+    addAnecdote: (anec) => set(
+      state => ({ 
+        anecdotes: [...state.anecdotes, { content: anec, id: getId(), votes: 0 }]
+      })
+    ) 
   },
 }))
 
