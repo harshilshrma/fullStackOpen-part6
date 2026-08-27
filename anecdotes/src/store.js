@@ -22,6 +22,7 @@ const sortByVotes = (a, b) => b.votes - a.votes
 
 const useAnecdoteStore = create((set) => ({
   anecdotes: anecdotesAtStart.map(asObject).toSorted(sortByVotes),
+  filter: '',
   actions: {
     incrementVote: (id) => set(
       state => {
@@ -40,9 +41,14 @@ const useAnecdoteStore = create((set) => ({
         const newArray = [...state.anecdotes, { content: anec, id: getId(), votes: 0 }].toSorted(sortByVotes)
         return { anecdotes: newArray }
       }
+    ),
+
+    updateFilter: (newValue) => set(
+      state => ({ filter: newValue })
     )
   },
 }))
 
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+export const useFilter = () => useAnecdoteStore(state => state.filter)
 export const useAnecdotesActions = () => useAnecdoteStore(state => state.actions)
