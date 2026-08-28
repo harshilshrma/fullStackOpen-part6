@@ -39,7 +39,7 @@ const useAnecdoteStore = create((set) => ({
         id, { ...anecdote, votes: anecdote.votes + 1 }
       )
 
-      setAndRemoveNotification(`You voted ${anecdote.content}`)
+      setAndRemoveNotification(`you voted '${anecdote.content}'`)
 
       set(state => ({
         anecdotes: state.anecdotes.map(a => a.id === id ? updated : a).toSorted(sortByVotes)
