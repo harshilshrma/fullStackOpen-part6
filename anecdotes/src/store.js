@@ -9,20 +9,18 @@ const useAnecdoteStore = create((set) => ({
   actions: {
     initialize: async () => {
       const anecdotes = await anecdoteService.getAll()
-      set(() => ({ anecdotes: anecdotes }))
+      set(() => ({ anecdotes: anecdotes.toSorted(sortByVotes) }))
     },
 
-    incrementVote: (id) => set(
-      state => {
-        const newArray = state.anecdotes.map(anec =>
-          anec.id === id
-            ? { ...anec, votes: anec.votes + 1 }
-            : anec
-        ).toSorted(sortByVotes)
-
-        return { anecdotes: newArray }
-      }
-    ),
+    incrementVote: async (id) => {
+      const anecdote = useAnecdoteStore.getState().anecdotes.find(anec => anec.id === id)
+      const updated = await anecdoteService.updateVotes(
+        id, {...anecdote, votes: anecdote.votes + 1}
+      )
+      set(state => ({ 
+        anecdotes: state.anecdotes.map(a => a.id === id ? updated : a).toSorted(sortByVotes)
+      }))
+    },
 
     addAnecdote: async (anec) => {
       const newAnecdote = await anecdoteService.createNew(anec)
