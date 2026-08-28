@@ -3,6 +3,25 @@ import anecdoteService from './services/anecdotes'
 
 const sortByVotes = (a, b) => b.votes - a.votes
 
+let notificationTimeout
+const useNotificationStore = create((set) => ({
+  notification: '',
+  actions: {
+    setAndRemoveNotification: (notif) => {
+      if (notificationTimeout) {
+        clearTimeout(notificationTimeout)
+      }
+
+      set({ notification: notif })
+
+      notificationTimeout = setTimeout(() => {
+        set({ notification: '' })
+      }, 5000)
+    }
+  }
+}))
+export const useNotification = () => useNotificationStore(state => state.notification)
+
 const useAnecdoteStore = create((set) => ({
   anecdotes: [],
   filter: '',
@@ -13,17 +32,26 @@ const useAnecdoteStore = create((set) => ({
     },
 
     incrementVote: async (id) => {
+      const { setAndRemoveNotification } = useNotificationStore.getState().actions
+
       const anecdote = useAnecdoteStore.getState().anecdotes.find(anec => anec.id === id)
       const updated = await anecdoteService.updateVotes(
-        id, {...anecdote, votes: anecdote.votes + 1}
+        id, { ...anecdote, votes: anecdote.votes + 1 }
       )
-      set(state => ({ 
+
+      setAndRemoveNotification(`You voted ${anecdote.content}`)
+
+      set(state => ({
         anecdotes: state.anecdotes.map(a => a.id === id ? updated : a).toSorted(sortByVotes)
       }))
     },
 
     addAnecdote: async (anec) => {
+      const { setAndRemoveNotification } = useNotificationStore.getState().actions
       const newAnecdote = await anecdoteService.createNew(anec)
+
+      setAndRemoveNotification(`You added ${newAnecdote.content}`)
+
       set(state => ({ anecdotes: [...state.anecdotes, newAnecdote] }))
     },
 
