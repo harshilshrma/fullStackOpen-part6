@@ -8,7 +8,7 @@ const AnecdoteList = () => {
     const anecdotesArray = anecdotes
         .filter(anec => anec.content.includes(filterValue))
         .map((anecdote) => (
-            <div key={anecdote.id}>
+            <div data-testid="anecdote-container" key={anecdote.id}>
                 <div>{anecdote.content}</div>
                 <div>
                     has {anecdote.votes}
