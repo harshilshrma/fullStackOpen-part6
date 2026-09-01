@@ -74,4 +74,24 @@ describe('Component Tests', () => {
         expect(within(anecdotes[0]).getByText('Adding manpower to a late software project makes it later!'))
         expect(anecdotes.length).toBe(1)
     })
+
+    it('voting increases the number of votes for an anecdote', async () => {
+        anecdoteService.getAll.mockResolvedValue(mockAnecdotesArray)
+        anecdoteService.updateVotes.mockResolvedValue({
+            ...mockAnecdotesArray[1],
+            votes: 7
+        })
+        
+        await useAnecdoteStore.getState().actions.initialize()
+
+        const { getAllByTestId } = render(<AnecdoteList />)
+        const anecdotes = getAllByTestId('anecdote-container')
+        
+        expect(within(anecdotes[0]).getByText('has 6'))
+        
+        const anecVoteButton = within(anecdotes[0]).getByRole('button', { name: 'vote' })
+        await anecVoteButton.click()
+        
+        await within(anecdotes[0]).findByText('has 7')
+    })
 })
