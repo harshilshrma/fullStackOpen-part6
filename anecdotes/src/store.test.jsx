@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, within, cleanup } from '@testing-library/react'
-import useAnecdoteStore from './src/store'
-import anecdoteService from './src/services/anecdotes'
-import AnecdoteList from './src/components/AnecdoteList'
+import useAnecdoteStore from './store'
+import anecdoteService from './services/anecdotes'
+import AnecdoteList from './components/AnecdoteList'
 
 const mockAnecdotesArray = [
     {
