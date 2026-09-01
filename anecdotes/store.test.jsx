@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { render, within, cleanup } from '@testing-library/react'
 import useAnecdoteStore from './src/store'
 import anecdoteService from './src/services/anecdotes'
 import AnecdoteList from './src/components/AnecdoteList'
@@ -35,6 +35,10 @@ beforeEach(() => {
     useAnecdoteStore.setState({ anecdotes: [], filter: '' })
 })
 
+afterEach(() => {
+    cleanup()
+})
+
 describe('Store Tests', () => {
     it('the state is initialized with the anecdotes returned by the backend', async () => {
         const mockAnecdotes = [mockAnecdotesArray[0]]
@@ -56,5 +60,18 @@ describe('Component Tests', () => {
         expect(within(anecdotes[0]).getByText('Adding manpower to a late software project makes it later!'))
         expect(within(anecdotes[1]).getByText('If it hurts, do it more often'))
         expect(within(anecdotes[2]).getByText('The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.'))
+    })
+
+    it('AnecdoteList receives a properly filtered list of anecdotes', async () => {
+        anecdoteService.getAll.mockResolvedValue(mockAnecdotesArray)
+        await useAnecdoteStore.getState().actions.initialize()
+
+        useAnecdoteStore.setState({ filter: 'power' })
+
+        const { getAllByTestId } = render(<AnecdoteList />)
+        const anecdotes = getAllByTestId('anecdote-container')
+
+        expect(within(anecdotes[0]).getByText('Adding manpower to a late software project makes it later!'))
+        expect(anecdotes.length).toBe(1)
     })
 })
