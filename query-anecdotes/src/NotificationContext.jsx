@@ -1,9 +1,9 @@
 import { createContext, useState, useRef } from "react";
 
-const AnecdoteContext = createContext()
-export default AnecdoteContext
+const NotificationContext = createContext()
+export default NotificationContext
 
-export const AnecdoteContextProvider = (props) => {
+export const NotificationContextProvider = (props) => {
     const [notification, setNotification] = useState('')
     const notificationTimeout = useRef(null)
 
@@ -20,8 +20,8 @@ export const AnecdoteContextProvider = (props) => {
     }
 
     return (
-        <AnecdoteContext.Provider value={{ notification, showNotification }}>
+        <NotificationContext.Provider value={{ notification, showNotification }}>
             {props.children}
-        </AnecdoteContext.Provider>
+        </NotificationContext.Provider>
     )
 }
