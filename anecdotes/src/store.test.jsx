@@ -22,7 +22,7 @@ const mockAnecdotesArray = [
     },
 ]
 
-vi.mock('./src/services/anecdotes', () => ({
+vi.mock('./services/anecdotes', () => ({
     default: {
         getAll: vi.fn(),
         createNew: vi.fn(),
